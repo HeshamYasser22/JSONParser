@@ -1,0 +1,10 @@
+{
+  "name": "Hesham Yasser Ahmed",
+  "age": 25 ,
+  "student": false,
+  "skills": ["C++", "Linux"],
+  "address": {
+    "country": "Egypt",
+    "city": "Fayoum"
+  }
+}

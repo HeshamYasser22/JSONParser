@@ -1,24 +1,30 @@
-MAIN=Main.cpp
-LIB=JsonParser.cpp
+MAIN=./src/Main.cpp
+LIB=./src/JsonParser.cpp
 CC=g++
-OUT=Project.exe
+OUT=./build/Project.exe
 CC_V=c++17
 PARAM= -fdiagnostics-color=always -g
-TOOL=JQ.cpp
-OUTTOOL=JQ.exe
-DATAFILE=./Export.txt
+TOOL=./src/JQ.cpp
+OUTTOOL=./build/JQ.exe
+DATAFILE=./output/Export.txt
+
 
 
 Build: 
-	$(CC) $(PARAM) -std=$(CC_V) $(MAIN) $(LIB) -o $(OUT)
+	$(CC) $(PARAM) -std=$(CC_V) $(MAIN) $(LIB) -o $(OUT) 2> ./output/Log.txt
 
 
 run : Build
-	./$(OUT)
+	$(OUT)
 
 runonly:
-	./$(OUT)
+	$(OUT)
 
-runscript: 
-	$(CC) $(PARAM) -std=$(CC_V) $(TOOL) $(LIB) -o $(OUTTOOL)
-	./$(OUTTOOL) $(DATAFILE) .name
+BuildScript:
+	$(CC) $(PARAM) -std=$(CC_V) $(TOOL) $(LIB) -o $(OUTTOOL) 2> ./output/ToolLog.txt
+
+runscript: BuildScript
+	$(OUTTOOL) $(DATAFILE) $(ARG)
+
+runonlyscript:
+	$(OUTTOOL) $(DATAFILE) $(ARG)
