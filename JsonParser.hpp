@@ -26,7 +26,10 @@ public:
     void print();
 };
 
-std::optional<JSON> ParseJSONFile(const std::string& Str);
+std::optional<JSON> ParseJSONString(const std::string& Str);
+std::optional<JSON> ParseJSONFile(const std::ifstream& fs);
+bool GenerateJSONFile(JSON & Obj, const std::ofstream & ofs);
+std::string GenerateJSONString(JSON & Obj);
 void RemoveStartEndSpaces(std::string &s);
 void RemoveStartEndSquareBrackets(std::string &s);
 void RemoveStartEndCurlBrackets(std::string &s);

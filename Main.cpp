@@ -8,7 +8,7 @@
 int main()
 {
         std::optional<JSON> S1;
-        //     S1 = ParseJSONFile(R"({
+        //     S1 = ParseJSONString(R"({
         //                             "location": {
         //                                 "country": "India",
         //                                 "state": "Uttar Pradesh",
@@ -33,16 +33,21 @@ int main()
         //                         }
         // )");
 
-        S1 = ParseJSONFile(R"({
-  "name": "Hesham Yasser",
-  "age": 24.5 ,
-  "student": false,
-  "skills": ["C++", "Linux"],
-  "address": {
-    "country": "Egypt",
-    "city": "Fayoum"
-  }
-})");
+//         S1 = ParseJSONString(R"({
+//   "name": "Hesham Yasser",
+//   "age": 24.5 ,
+//   "student": false,
+//   "skills": ["C++", "Linux"],
+//   "address": {
+//     "country": "Egypt",
+//     "city": "Fayoum"
+//   }
+// })");
+        std::ifstream File("Data.txt");
+        S1 = ParseJSONFile(File);
+        std::ofstream OutFile("Export.txt");
+        GenerateJSONFile(S1.value(), OutFile);
+        // std::cout << GenerateJSONString(S1.value()) << std::endl;
 
         // S1.value()["location"].print();
         S1.value()

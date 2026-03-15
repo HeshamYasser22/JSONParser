@@ -121,7 +121,7 @@ void JSON::print()
     }
 }
 
-std::optional<JSON> ParseJSONFile(const std::string &Str)
+std::optional<JSON> ParseJSONString(const std::string &Str)
 {
     JSON S1;
     std::stringstream ss(Str);
@@ -132,7 +132,6 @@ std::optional<JSON> ParseJSONFile(const std::string &Str)
     std::optional<JSON> DataJSON;
     if (ss.peek() != '{')
     {
-        std::cout << ss.peek();
         std::cout << "Error in Opening Brackets" << std::endl;
         return std::nullopt;
     }
@@ -140,7 +139,6 @@ std::optional<JSON> ParseJSONFile(const std::string &Str)
     {
         if (C == '"')
         {
-
             std::getline(ss, Data, '"');
             IgnoreSpaces(ss);
             ss >> C;
@@ -157,7 +155,6 @@ std::optional<JSON> ParseJSONFile(const std::string &Str)
             }
             else if (ss.peek() == '[')
             {
-                std::getline(ss, Token, ',');
                 std::getline(ss, Token, ']');
                 Token += "]";
                 while (CheckArrDepth(Token) > 0)
@@ -165,7 +162,6 @@ std::optional<JSON> ParseJSONFile(const std::string &Str)
                     std::getline(ss, Extra_S, ']');
                     Token += Extra_S + ']';
                 }
-                // cout << "Combo Token : " << Token << endl;
                 DataJSON = GetArrFromString(Token);
             }
             else if (ss.peek() == '{')
@@ -178,7 +174,7 @@ std::optional<JSON> ParseJSONFile(const std::string &Str)
                     std::getline(ss, Extra_S, '}');
                     Token += Extra_S + '}';
                 }
-                DataJSON = ParseJSONFile(Token);
+                DataJSON = ParseJSONString(Token);
             }
             if (DataJSON != std::nullopt)
             {
@@ -191,11 +187,11 @@ std::optional<JSON> ParseJSONFile(const std::string &Str)
 
 void RemoveStartEndSpaces(std::string &s)
 {
-    while ((s.at(s.size() - 1) == ' ') || (s.at(s.size() - 1) == '\n') || (s.at(s.size() - 1) == '\t'))
+    while ((s.at(s.size() - 1) == ' ') || (s.at(s.size() - 1) == '\n') || (s.at(s.size() - 1) == '\t') || (s.at(s.size() - 1) == 10))
     {
         s = s.substr(0, s.size() - 1);
     }
-    while ((s.at(0) == ' ') || (s.at(0) == '\n') || (s.at(s.size() - 1) == '\t'))
+    while ((s.at(0) == ' ') || (s.at(0) == '\n') || (s.at(0) == '\t') || (s.at(0) == 10))
     {
         s = s.substr(1, s.size() - 1);
     }
@@ -261,7 +257,7 @@ std::optional<JSON> GetNumFromString(std::string s)
             }
             catch (std::exception &e)
             {
-                std::cerr << "Counld Get Value from String (Int)" << std::endl;
+                std::cerr << "Couldn't Get Value from String (Int)" << std::endl;
             }
         }
         else
@@ -272,7 +268,7 @@ std::optional<JSON> GetNumFromString(std::string s)
             }
             catch (const std::exception &e)
             {
-                std::cerr << "Counld Get Value from String (Float)" << std::endl;
+                std::cerr << "Couldn't  Get Value from String (Float)" << std::endl;
             }
         }
 
@@ -293,7 +289,6 @@ std::optional<JSON> GetArrFromString(std::string s)
     {
         while (std::getline(ss, Data, ','))
         {
-            // cout << "Data : " << Data << endl;
             RemoveStartEndSpaces(Data);
             if (Data[0] == '"')
             {
@@ -311,21 +306,16 @@ std::optional<JSON> GetArrFromString(std::string s)
     }
     else
     {
-        // cout << "String Here : " << s << endl;
         while (std::getline(ss, Data, '}'))
         {
             RemoveStartEndComma(Data);
             RemoveStartEndSpaces(Data);
-            // cout << "Data : " << Data << endl;
-            Parsed_Data = ParseJSONFile(Data);
+            Parsed_Data = ParseJSONString(Data);
             if (Parsed_Data != std::nullopt)
             {
                 Values.push_back(Parsed_Data.value());
             }
-            // while (ss.peek() != '{')
-            // {
-            //     ss.ignore();
-            // }
+
         }
     }
     return Values;
@@ -388,8 +378,45 @@ int CheckObjectDepth(std::string s)
 
 void IgnoreSpaces(std::stringstream &ss)
 {
-    while ((ss.peek() == ' ') || (ss.peek() == 0) || (ss.peek() == 10))
+    while ((ss.peek() == ' ') || (ss.peek() == 0) || (ss.peek() == 10) || (ss.peek() == 9))
     {
         ss.ignore();
     }
+}
+
+std::optional<JSON> ParseJSONFile(const std::ifstream& fs)
+{
+    if (!fs.is_open())
+    {
+        std::cerr << "File is not available" << std::endl;
+        return std::nullopt;
+    }
+    std::stringstream ss;
+    ss << fs.rdbuf();
+    return (ParseJSONString(ss.str()));
+}
+
+
+bool GenerateJSONFile(JSON & Obj, const std::ofstream & ofs)
+{
+    if (!ofs.is_open())
+    {
+        std::cerr << "Can't find the File" << std::endl;
+        return false;
+    }
+    std::streambuf * OriginalBuff = std::cout.rdbuf();
+    std::cout.rdbuf(ofs.rdbuf());
+    Obj.print();
+    std::cout.rdbuf(OriginalBuff);
+    return true;
+
+}
+std::string GenerateJSONString(JSON & Obj)
+{
+    std::streambuf * OriginalBuff = std::cout.rdbuf();
+    std::stringstream ss;
+    std::cout.rdbuf(ss.rdbuf());
+    Obj.print();
+    std::cout.rdbuf(OriginalBuff);
+    return ss.str();
 }
