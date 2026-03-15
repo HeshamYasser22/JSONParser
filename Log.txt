@@ -1,0 +1,4 @@
+g++ [ "-fdiagnostics-color=always", "-g"] -std=c++17 JsonParser.cpp Second.cpp -o Project.exe
+g++ "-fdiagnostics-color=always", "-g" -std=c++17 JsonParser.cpp Second.cpp -o Project.exe
+g++ -fdiagnostics-color=always -g -std=c++17 JsonParser.cpp Second.cpp -o Project.exe
+./Project.exe

@@ -1,0 +1,24 @@
+{
+        "location" :
+        {
+                "city" : "Greater Noida",
+                "country" : "India",
+                "state" : "Uttar Pradesh"
+        },
+        "organizations" : [
+        {
+                "departments" : [ "Computer Science", "Mathematics", "Physics" ],
+                "name" : "GeeksforGeeks",
+                "type" : "Educational"
+        },
+        {
+                "departments" : [ "Software Development", "Hardware Design" ],
+                "name" : "TechCorp",
+                "type" : "Technology"
+        } ],
+        "projects" :
+        {
+                "completed" : [ "ProjectX", "ProjectY" ], 
+                "ongoing" : [ "ProjectA", "ProjectB" ]
+        }
+}
